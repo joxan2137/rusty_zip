@@ -1,33 +1,62 @@
-use std::env;
-use windows_registry::{Key, };
 use anyhow::Result;
-use zip;
+use clap::{arg, command, Parser};
 
-/*
-    a : Add files to archive
-    b : Benchmark
-    d : Delete files from archive
-    e : Extract files from archive (without using directory names)
-    h : Calculate hash values for files
-    i : Show information about supported formats
-    l : List contents of archive
-    rn : Rename files in archive
-    t : Test integrity of archive
-    u : Update files to archive
-    x : eXtract files with full paths
-*/
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None, arg_required_else_help = true)]
+struct Args {
+    /// Add files to archive
+    #[arg(short, long)]
+    add: bool,
+    /// Benchmark
+    #[arg(short, long)]
+    benchmark: bool,
+    /// Delete files frm archive
+    #[arg(short, long)]
+    delete: bool,
+    /// Extract files from archive (without using directory names)
+    #[arg(short = 'e', long)]
+    extract: bool,
+    /// Calculate hash values for file
+    #[arg(short = 's', long)]
+    hash: bool,
+    /// Show information about supported formats
+    #[arg(short, long)]
+    info: bool,
+    /// List contents of archive
+    #[arg(short, long)]
+    list: bool,
+    /// Rename files in archive
+    #[arg(short, long)]
+    rename: bool,
+    /// Test integrity of archive
+    #[arg(short, long)]
+    test: bool,
+    /// Update files to archive
+    #[arg(short, long)]
+    update: bool,
+    /// Extract files with full paths
+    #[arg(short = 'x', long)]
+    full_extract: bool,
+    /// Archive name
+    archive_name: String,
+    /// Files
+    files: Option<Vec<String>>,
+}
 
-fn main() -> Result<()>{
-    let args: Vec<String> = env::args().collect();
+const SUPPORTED_FORMATS: &[&str] = &[".zip", ".7z"];
 
-    if args.is_empty() {
-        println!("Rusty Zip\n
-        Usage: rz <command> [<switches>...] <archive_name> [<file_names>...] [@listfile]\n
-         a : Add files to archive
-         e : Extract files from archive (without using directory names)
-         l : List contents of archive
-         t : Test integrity of archive
-        ")
+fn main() -> Result<()> {
+    let args = Args::parse();
+
+    if !args.archive_name.is_ascii() {
+        panic!("non ascii archive name");
+    }
+
+    if !SUPPORTED_FORMATS
+        .iter()
+        .any(|format| args.archive_name.ends_with(format))
+    {
+        panic!("format not supported")
     }
 
     Ok(())

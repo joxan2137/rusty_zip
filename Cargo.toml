@@ -1,16 +1,16 @@
 [package]
 name = "rusty_zip"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 anyhow = "*"
-zip = "*"
-windows-registry = "*"
+clap = { version = "*", features = ["derive"] }
 rust_search = "*"
+windows-registry = "*"
+zip = "*"
 
 [profile.release]
 strip = true
 lto = true
 codegen-units = 1
-panic = "abort"
