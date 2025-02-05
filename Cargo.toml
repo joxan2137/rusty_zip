@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "*"
 clap = { version = "*", features = ["derive"] }
-rust_search = "*"
+ignore = "*"
 windows-registry = "*"
 zip = "*"
 
