@@ -56,73 +56,109 @@ fn main() -> Result<()> {
             .iter()
             .any(|format| args.archive_name.as_ref().unwrap().ends_with(format))
         {
-            panic!("Archive format not supported. Supported Archive formats: {:?}", SUPPORTED_FORMATS);
+            panic!(
+                "Archive format not supported. Supported Archive formats: {:?}",
+                SUPPORTED_FORMATS
+            );
         }
     }
 
     Ok(())
 }
 
-fn handle_arg(args: Args) -> Result<()>{
-
-
+fn handle_arg(args: Args) -> Result<()> {
     match args {
-        Args { add: Some(true), .. }  => {
+        Args {
+            add: Some(true), ..
+        } => {
             if args.files.is_none() {
                 panic!("A path to the target is required.");
             }
-
             let path = Path::new(&args.files.unwrap());
 
-
             Ok(())
-
-        },   
-        Args { benchmark: Some(true), .. } => {
+        }
+        Args {
+            benchmark: Some(true),
+            ..
+        } => {
             loop {
                 println!("Benchmarking...");
             }
             Ok(())
-        },
-        Args { delete: Some(true), files: Some(value), .. } => {
+        }
+        Args {
+            delete: Some(true),
+            files: Some(value),
+            ..
+        } => {
             let path = Path::new(&value);
 
             Ok(())
-        },
-        Args { extract: Some(true), files: Some(value), .. } => {
+        }
+        Args {
+            extract: Some(true),
+            files: Some(value),
+            ..
+        } => {
             let path = Path::new(&value);
+
             Ok(())
-        },
-        Args { hash: Some(true), files: Some(value), .. } => {
+        }
+        Args {
+            hash: Some(true),
+            files: Some(value),
+            ..
+        } => {
             let path = Path::new(&value);
+
             Ok(())
-        },
-        Args { info: Some(true), .. } => {
+        }
+        Args {
+            info: Some(true), ..
+        } => {
             println!("Rusty Zip - A simple archive manager inspired by 7zip made with Rust.");
             println!("Authors: @joxan2137 @scaledcat");
             println!("Version: {}", env!("CARGO_PKG_VERSION"));
             println!("Supported Archive formats: {:?}", SUPPORTED_FORMATS);
-            Ok(())
-        },
 
-        Args { list: Some(true), files: Some(value), .. } => {
+            Ok(())
+        }
+
+        Args {
+            list: Some(true),
+            files: Some(value),
+            ..
+        } => {
             let path = Path::new(&value);
 
             Ok(())
-        },
-        Args { rename: Some(true), files: Some(value), .. } => {
+        }
+        Args {
+            rename: Some(true),
+            files: Some(value),
+            ..
+        } => {
             let path = Path::new(&value);
-            Ok(())
-        },
 
-        Args { test: Some(true), files: Some(value), .. } => {
+            Ok(())
+        }
+
+        Args {
+            test: Some(true),
+            files: Some(value),
+            ..
+        } => {
             let path = Path::new(&value);
-            Ok(())
-        },
 
-        Args { update: Some(true), .. } => {
+            Ok(())
+        }
+
+        Args {
+            update: Some(true), ..
+        } => {
             panic!("Automatic updates are not supported yet.");
-        },
+        }
         _ => {
             panic!("Invalid arguments.");
         }
