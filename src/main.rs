@@ -2,7 +2,6 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{arg, command, Parser};
-use flate2;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None, arg_required_else_help = true)]
@@ -51,18 +50,18 @@ const SUPPORTED_FORMATS: &[&str] = &[".zip", ".7z", ".tar", ".gz", ".rar"];
 fn main() -> Result<()> {
     let args = Args::parse();
 
-    if args.archive_name.is_some() {
-        if !SUPPORTED_FORMATS
+    if args.archive_name.is_some()
+        && !SUPPORTED_FORMATS
             .iter()
             .any(|format| args.archive_name.as_ref().unwrap().ends_with(format))
-        {
-            panic!(
-                "Archive format not supported. Supported Archive formats: {:?}",
-                SUPPORTED_FORMATS
-            );
-        }
+    {
+        panic!(
+            "Archive format not supported. Supported Archive formats: {:?}",
+            SUPPORTED_FORMATS
+        );
     }
 
+    handle_args(args)?;
     Ok(())
 }
 

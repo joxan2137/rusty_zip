@@ -4,12 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "*"
-clap = { version = "*", features = ["derive"] }
-ignore = "*"
-windows-registry = "*"
-zip = "*"
-flate2 = "*"
+anyhow = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+ignore = "0.4"
+flate2 = "1.0"
 
 [profile.release]
 strip = true
