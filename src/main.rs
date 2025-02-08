@@ -71,8 +71,8 @@ fn handle_arg(args: Args) -> Result<()>{
             if args.files.is_none() {
                 panic!("A path to the target is required.");
             }
-            
-            let path = Path::new(&value);
+
+            let path = Path::new(&args.files.unwrap());
 
 
             Ok(())
