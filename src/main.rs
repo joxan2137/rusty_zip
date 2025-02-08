@@ -66,7 +66,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn handle_arg(args: Args) -> Result<()> {
+fn handle_args(args: Args) -> Result<()> {
     match args {
         Args {
             add: Some(true), ..
