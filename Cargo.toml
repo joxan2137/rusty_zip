@@ -9,6 +9,7 @@ clap = { version = "*", features = ["derive"] }
 ignore = "*"
 windows-registry = "*"
 zip = "*"
+flate2 = "*"
 
 [profile.release]
 strip = true
