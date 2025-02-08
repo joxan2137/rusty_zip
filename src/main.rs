@@ -13,7 +13,7 @@ struct Args {
     /// Benchmark
     #[arg(short, long)]
     benchmark: Option<bool>,
-    /// Delete files frm archive
+    /// Delete files from archive
     #[arg(short, long)]
     delete: Option<bool>,
     /// Extract files from archive (without using directory names)
@@ -42,7 +42,7 @@ struct Args {
     full_extract: Option<bool>,
     /// Archive name
     archive_name: Option<String>,
-    /// Files
+    /// File(s)
     files: Option<String>,
 }
 
@@ -67,54 +67,64 @@ fn handle_arg(args: Args) -> Result<()>{
 
 
     match args {
-        Args { add: Some(true), files: Some(value), .. }  => {
+        Args { add: Some(true), .. }  => {
+            if args.files.is_none() {
+                panic!("A path to the target is required.");
+            }
+            
             let path = Path::new(&value);
+
 
             Ok(())
 
         },   
-        Args { add: Some(true), files: None, .. } => {
-            panic!("A path to the target is required.");
-        },
         Args { benchmark: Some(true), .. } => {
+            loop {
+                println!("Benchmarking...");
+            }
             Ok(())
         },
+        Args { delete: Some(true), files: Some(value), .. } => {
+            let path = Path::new(&value);
 
-
-        Args { delete: Some(true), .. } => {
             Ok(())
         },
-        Args { extract: Some(true), .. } => {
+        Args { extract: Some(true), files: Some(value), .. } => {
+            let path = Path::new(&value);
             Ok(())
         },
-
-        Args { hash: Some(true), .. } => {
+        Args { hash: Some(true), files: Some(value), .. } => {
+            let path = Path::new(&value);
             Ok(())
         },
-
         Args { info: Some(true), .. } => {
+            println!("Rusty Zip - A simple archive manager inspired by 7zip made with Rust.");
+            println!("Authors: @joxan2137 @scaledcat");
+            println!("Version: {}", env!("CARGO_PKG_VERSION"));
+            println!("Supported Archive formats: {:?}", SUPPORTED_FORMATS);
             Ok(())
         },
 
-        Args { list: Some(true), .. } => {
+        Args { list: Some(true), files: Some(value), .. } => {
+            let path = Path::new(&value);
+
+            Ok(())
+        },
+        Args { rename: Some(true), files: Some(value), .. } => {
+            let path = Path::new(&value);
             Ok(())
         },
 
-        Args { rename: Some(true), .. } => {
+        Args { test: Some(true), files: Some(value), .. } => {
+            let path = Path::new(&value);
             Ok(())
         },
 
-        Args { test: Some(true), .. } => {
-            Ok(())
-        },
         Args { update: Some(true), .. } => {
-            Ok(())
-        },
-        Args { full_extract: Some(true), .. } => {
-            Ok(())
+            panic!("Automatic updates are not supported yet.");
         },
         _ => {
-            Ok(())
+            panic!("Invalid arguments.");
         }
     }
 }
