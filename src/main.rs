@@ -2,6 +2,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{arg, command, Parser};
+use std::fs;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None, arg_required_else_help = true)]
@@ -161,5 +162,66 @@ fn handle_args(args: Args) -> Result<()> {
         _ => {
             panic!("Invalid arguments.");
         }
+    }
+}
+
+fn add_files(files: &str) -> Result<()> {
+    let mut file_vec = files.split(",").collect::<Vec<&str>>();
+    for file in file_vec {
+        let path = Path::new(&file);
+        if !path.exists() {
+            return Err(anyhow::anyhow!("File does not exist."));
+        }
+        let metadata = fs::metadata(path)?;
+    }
+    Ok(())
+}
+
+use std::fs::File;
+use std::io::Read;
+
+fn detect_archive_type(path: &str) -> Result<String> {
+    let mut file = File::open(path)?;
+    let mut header = [0u8; 16];
+    file.read_exact(&mut header).unwrap_or(());
+    
+    match &header {
+        [0x50, 0x4B, 0x03, 0x04, ..] => {
+            println!("Detected ZIP archive");
+            Ok("ZIP".into())
+        },
+        [0x37, 0x7A, 0xBC, 0xAF, 0x27, 0x1C, ..] => { 
+            println!("Detected 7z archive");
+            Ok("7z".to_string())
+        },
+        [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x01, 0x00, ..] => {
+            println!("Detected RAR5 archive");
+            Ok("RAR5".to_string()) 
+        },
+        [0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00, ..] => {
+            println!("Detected RAR4 archive");
+            Ok("RAR4".to_string()) 
+        },
+        [0x1F, 0x8B, 0x08, ..] => {
+            println!("Detected GZIP archive");
+            Ok("GZIP".to_string())
+        },
+        _ => {
+            println!("Detected unknown archive");
+            Ok("Unknown".to_string())
+        }
+    }
+}
+
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_detect_archive_type() {
+        assert_eq!(detect_archive_type("test.zip").unwrap(), "ZIP");
+        assert_eq!(detect_archive_type("test.7z").unwrap(), "7z");
+        assert_eq!(detect_archive_type("test.rar").unwrap(), "RAR5");
+        assert_eq!(detect_archive_type("test.tar.gz").unwrap(), "GZIP");
+        assert_eq!(detect_archive_type("test.txt").unwrap(), "Unknown");
     }
 }

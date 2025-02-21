@@ -4,10 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0"
-clap = { version = "4.5", features = ["derive"] }
-ignore = "0.4"
-flate2 = "1.0"
+anyhow = "1.0.96"
+clap = { version = "4.5.30", features = ["derive"] }
+ignore = "0.4.23"
+
+flate2 = "1.0.35"
+zip = "2.2.2"
+sevenz-rust = "0.6.1"
+xz2 = "0.1.7"
+unrar = "0.5.8"
+
 
 [profile.release]
 strip = true
