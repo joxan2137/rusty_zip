@@ -4,6 +4,8 @@ use anyhow::Result;
 use clap::{arg, command, Parser};
 use std::fs;
 
+mod formats;
+
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None, arg_required_else_help = true)]
 struct Args {
@@ -74,7 +76,7 @@ fn handle_args(args: Args) -> Result<()> {
             if args.files.is_none() {
                 panic!("A path to the target is required.");
             }
-            let path = Path::new(&args.files.unwrap());
+            let _path = Path::new(&args.files.unwrap());
 
             Ok(())
         }
@@ -82,17 +84,14 @@ fn handle_args(args: Args) -> Result<()> {
             benchmark: Some(true),
             ..
         } => {
-            loop {
-                println!("Benchmarking...");
-            }
-            Ok(())
+            todo!()
         }
         Args {
             delete: Some(true),
             files: Some(value),
             ..
         } => {
-            let path = Path::new(&value);
+            let _path = Path::new(&value);
 
             Ok(())
         }
@@ -101,7 +100,7 @@ fn handle_args(args: Args) -> Result<()> {
             files: Some(value),
             ..
         } => {
-            let path = Path::new(&value);
+            let _path = Path::new(&value);
 
             Ok(())
         }
@@ -110,7 +109,7 @@ fn handle_args(args: Args) -> Result<()> {
             files: Some(value),
             ..
         } => {
-            let path = Path::new(&value);
+            let _path = Path::new(&value);
 
             Ok(())
         }
@@ -130,7 +129,7 @@ fn handle_args(args: Args) -> Result<()> {
             files: Some(value),
             ..
         } => {
-            let path = Path::new(&value);
+            let _path = Path::new(&value);
 
             Ok(())
         }
@@ -139,7 +138,7 @@ fn handle_args(args: Args) -> Result<()> {
             files: Some(value),
             ..
         } => {
-            let path = Path::new(&value);
+            let _path = Path::new(&value);
 
             Ok(())
         }
@@ -149,7 +148,7 @@ fn handle_args(args: Args) -> Result<()> {
             files: Some(value),
             ..
         } => {
-            let path = Path::new(&value);
+            let _path = Path::new(&value);
 
             Ok(())
         }
@@ -165,14 +164,15 @@ fn handle_args(args: Args) -> Result<()> {
     }
 }
 
+#[allow(dead_code)]
 fn add_files(files: &str) -> Result<()> {
-    let mut file_vec = files.split(",").collect::<Vec<&str>>();
+    let file_vec = files.split(",").collect::<Vec<&str>>();
     for file in file_vec {
         let path = Path::new(&file);
         if !path.exists() {
             return Err(anyhow::anyhow!("File does not exist."));
         }
-        let metadata = fs::metadata(path)?;
+        let _metadata = fs::metadata(path)?;
     }
     Ok(())
 }
@@ -180,6 +180,7 @@ fn add_files(files: &str) -> Result<()> {
 use std::fs::File;
 use std::io::Read;
 
+#[allow(dead_code)]
 fn detect_archive_type(path: &str) -> Result<String> {
     let mut file = File::open(path)?;
     let mut header = [0u8; 16];
@@ -213,7 +214,12 @@ fn detect_archive_type(path: &str) -> Result<String> {
     }
 }
 
+#[cfg(test)]
 mod tests {
+    use std::{io::BufReader, path::PathBuf};
+
+    use crate::formats::seven_z;
+
     use super::*;
 
     #[test]
@@ -223,5 +229,28 @@ mod tests {
         assert_eq!(detect_archive_type("test.rar").unwrap(), "RAR5");
         assert_eq!(detect_archive_type("test.tar.gz").unwrap(), "GZIP");
         assert_eq!(detect_archive_type("test.txt").unwrap(), "Unknown");
+    }
+
+    #[test]
+    fn test_decompression() {
+        let path = PathBuf::from("test_decompression");
+        fs::create_dir(&path).unwrap();
+
+        println!("{:?}", path);
+        assert_eq!(seven_z::decompress_seven_z(BufReader::new(File::open("test.7z").unwrap()), path.clone()).is_ok(), true);
+
+        fs::remove_dir_all(path).unwrap();
+    }
+    
+    #[test]
+    fn test_compression() {
+        let path = PathBuf::from("test_compression");
+        fs::create_dir(&path).unwrap();
+        File::create_new(path.join("test.txt")).unwrap();
+
+        println!("{:?}", path);
+        assert_eq!(seven_z::compress_seven_z(&path.join("test.txt"), &path, "file".to_string()).is_ok(), true);
+
+        fs::remove_dir_all(path).unwrap();
     }
 }
